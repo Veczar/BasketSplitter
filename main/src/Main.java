@@ -9,20 +9,22 @@ public class Main {
     public static void main(String[] args) {
         BasketSplitter basketSplitter = new BasketSplitter("C:\\Users\\Vecza\\IntelliJ_Projects\\ShopingLibrary\\config\\config.json");
 
-        List<String> Basket1 = null;
-        try{
-            Basket1 = basketSplitter.getBasket("C:\\Users\\Vecza\\IntelliJ_Projects\\ShopingLibrary\\config\\basket-1.json");
+        List<String> basket1 = null;
+        List<String> basket2 = null;
+         try{
+            basket1 = basketSplitter.getBasket("C:\\Users\\Vecza\\IntelliJ_Projects\\ShopingLibrary\\config\\basket-1.json");
+            basket2 = basketSplitter.getBasket("C:\\Users\\Vecza\\IntelliJ_Projects\\ShopingLibrary\\config\\basket-2.json");
         }catch (IOException e){
             throw new RuntimeException(e);
         } finally {
-            System.out.println(Basket1.toString());
+            System.out.println(basket1.toString());
         }
 
-        Map<String, List<String>> map = basketSplitter.split(Basket1);
-        System.out.println(map.toString());
-        map = basketSplitter.chooseTransport(map);
+        Map<String, List<String>> map = basketSplitter.split(basket1);
         System.out.println(map.toString());
 
+        map = basketSplitter.split(basket2);
+        System.out.println(map);
 
     }
 }

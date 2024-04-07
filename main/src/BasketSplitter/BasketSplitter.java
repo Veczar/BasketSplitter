@@ -52,32 +52,98 @@ public class BasketSplitter {
                 }
             }
         }
-
+        result = reverseMap(result);
+        result = allocateByEfficientTransport(result);
         return result;
     }
-    public Map<String, List<String>> chooseTransport(Map<String, List<String>> productsWithDeliveryMethods){
+    public Map<String, List<String>> reverseMap(Map<String, List<String>> originalMap) {
+        Map<String, List<String>> reversedMap = new HashMap<>();
+
+        for (Map.Entry<String, List<String>> entry : originalMap.entrySet()) {
+            String product = entry.getKey();
+            List<String> deliveryMethods = entry.getValue();
+
+            for (String method : deliveryMethods) {
+                reversedMap.computeIfAbsent(method, k -> new ArrayList<>()).add(product);
+            }
+        }
+
+        return reversedMap;
+    }
+    public Map<String, List<String>> allocateByEfficientTransport(Map<String, List<String>> productsWithDeliveryMethods) {
         Map<String, List<String>> result = new HashMap<>();
 
-        // Zbieranie wszystkich dostępnych metod dostawy
-        Set<String> allDeliveryMethods = new HashSet<>();
-        for (List<String> deliveryMethods : productsWithDeliveryMethods.values()) {
-            allDeliveryMethods.addAll(deliveryMethods);
+        /*while (!productsWithDeliveryMethods.isEmpty()) {
+            Map.Entry<String, List<String>> maxProductTransport = findMaxProductTransport(productsWithDeliveryMethods);
+            String maxTransport = maxProductTransport.getKey();
+            List<String> maxProducts = maxProductTransport.getValue();
+
+            List<String> remainingProducts = new ArrayList<>(maxProducts);
+
+            for (List<String> deliveryMethods : productsWithDeliveryMethods.values()) {
+                deliveryMethods.removeAll(maxProducts);
+            }
+
+            result.put(maxTransport, remainingProducts);
+           productsWithDeliveryMethods.entrySet().removeIf(entry -> entry.getValue().isEmpty());
+        }*/
+        /*while (!productsWithDeliveryMethods.isEmpty()) {
+            Map.Entry<String, List<String>> maxEntry = findMaxProductTransport(productsWithDeliveryMethods);
+            String efficientTransport = maxEntry.getKey();
+            List<String> productsForTransport = maxEntry.getValue();
+
+            // Dodaj produkty do wynikowej mapy dla danego transportu
+            result.put(efficientTransport, productsForTransport);
+
+            // Usuń przetworzone produkty z mapy oryginalnej
+            productsWithDeliveryMethods.remove(efficientTransport);
+
+            // Usuń przetworzone produkty z listy dostępnych produktów w oryginalnej mapie
+            for (List<String> products : productsWithDeliveryMethods.values()) {
+                products.removeAll(productsForTransport);
+            }
+        }*/
+        while (!productsWithDeliveryMethods.isEmpty()) {
+            Map.Entry<String, List<String>> maxEntry = findMaxProductTransport(productsWithDeliveryMethods);
+            String efficientTransport = maxEntry.getKey();
+            List<String> productsForTransport = maxEntry.getValue();
+
+            // Sprawdź czy lista produktów dla danego transportu jest pusta
+            if (!productsForTransport.isEmpty()) {
+                // Dodaj produkty do wynikowej mapy dla danego transportu
+                result.put(efficientTransport, productsForTransport);
+
+                // Usuń przetworzone produkty z mapy oryginalnej
+                productsWithDeliveryMethods.remove(efficientTransport);
+
+                // Usuń przetworzone produkty z listy dostępnych produktów w oryginalnej mapie
+                for (List<String> products : productsWithDeliveryMethods.values()) {
+                    products.removeAll(productsForTransport);
+                }
+            } else {
+                // Jeśli lista produktów dla danego transportu jest pusta, usuń ten transport z oryginalnej mapy
+                productsWithDeliveryMethods.remove(efficientTransport);
+            }
         }
 
-        // Przejście przez każdą metodę dostawy i sprawdzenie, czy jest używana przez wszystkie produkty
-        for (String deliveryMethod : allDeliveryMethods) {
-            List<String> productsWithCommonDeliveryMethod = new ArrayList<>();
-            for (Map.Entry<String, List<String>> entry : productsWithDeliveryMethods.entrySet()) {
-                if (entry.getValue().contains(deliveryMethod)) {
-                    productsWithCommonDeliveryMethod.add(entry.getKey());
-                }
-            }
-            result.put(deliveryMethod, productsWithCommonDeliveryMethod);
-        }
 
         return result;
     }
 
+    public Map.Entry<String, List<String>> findMaxProductTransport(Map<String, List<String>> productsWithDeliveryMethods) {
+        Map.Entry<String, List<String>> maxEntry = null;
+        int maxProducts = Integer.MIN_VALUE;
+
+        for (Map.Entry<String, List<String>> entry : productsWithDeliveryMethods.entrySet()) {
+            int productCount = entry.getValue().size();
+            if (productCount > maxProducts) {
+                maxProducts = productCount;
+                maxEntry = entry;
+            }
+        }
+
+        return maxEntry;
+    }
 
     public List<String> getBasket(String path) throws IOException {
         String jsonContent = new String(Files.readString(Paths.get(path)));
