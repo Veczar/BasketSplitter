@@ -1,6 +1,5 @@
 package BasketSplitter;
 
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -8,7 +7,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
-
 
 public class BasketSplitter {
     Map<String, List<String>> configMap;
@@ -34,9 +32,6 @@ public class BasketSplitter {
         }
             configMap  = map;
 
-        /*for (Map.Entry<String, List<String>> entry : map.entrySet()) {
-            System.out.println("Key: " + entry.getKey() + ", Values: " + entry.getValue());
-        }*/
     }
     public Map<String, List<String>> split(List<String> items){
         Map<String, List<String>> result = new HashMap<>();
@@ -70,74 +65,45 @@ public class BasketSplitter {
 
         return reversedMap;
     }
+
     public Map<String, List<String>> allocateByEfficientTransport(Map<String, List<String>> productsWithDeliveryMethods) {
-        Map<String, List<String>> result = new HashMap<>();
+       Map<String, List<String>> result = new HashMap<>();
 
-        /*while (!productsWithDeliveryMethods.isEmpty()) {
-            Map.Entry<String, List<String>> maxProductTransport = findMaxProductTransport(productsWithDeliveryMethods);
-            String maxTransport = maxProductTransport.getKey();
-            List<String> maxProducts = maxProductTransport.getValue();
-
-            List<String> remainingProducts = new ArrayList<>(maxProducts);
-
-            for (List<String> deliveryMethods : productsWithDeliveryMethods.values()) {
-                deliveryMethods.removeAll(maxProducts);
-            }
-
-            result.put(maxTransport, remainingProducts);
-           productsWithDeliveryMethods.entrySet().removeIf(entry -> entry.getValue().isEmpty());
-        }*/
-        /*while (!productsWithDeliveryMethods.isEmpty()) {
-            Map.Entry<String, List<String>> maxEntry = findMaxProductTransport(productsWithDeliveryMethods);
-            String efficientTransport = maxEntry.getKey();
-            List<String> productsForTransport = maxEntry.getValue();
-
-            // Dodaj produkty do wynikowej mapy dla danego transportu
-            result.put(efficientTransport, productsForTransport);
-
-            // Usuń przetworzone produkty z mapy oryginalnej
-            productsWithDeliveryMethods.remove(efficientTransport);
-
-            // Usuń przetworzone produkty z listy dostępnych produktów w oryginalnej mapie
-            for (List<String> products : productsWithDeliveryMethods.values()) {
-                products.removeAll(productsForTransport);
-            }
-        }*/
         while (!productsWithDeliveryMethods.isEmpty()) {
             Map.Entry<String, List<String>> maxEntry = findMaxProductTransport(productsWithDeliveryMethods);
             String efficientTransport = maxEntry.getKey();
             List<String> productsForTransport = maxEntry.getValue();
 
-            // Sprawdź czy lista produktów dla danego transportu jest pusta
             if (!productsForTransport.isEmpty()) {
-                // Dodaj produkty do wynikowej mapy dla danego transportu
                 result.put(efficientTransport, productsForTransport);
 
-                // Usuń przetworzone produkty z mapy oryginalnej
                 productsWithDeliveryMethods.remove(efficientTransport);
 
-                // Usuń przetworzone produkty z listy dostępnych produktów w oryginalnej mapie
                 for (List<String> products : productsWithDeliveryMethods.values()) {
                     products.removeAll(productsForTransport);
                 }
             } else {
-                // Jeśli lista produktów dla danego transportu jest pusta, usuń ten transport z oryginalnej mapy
                 productsWithDeliveryMethods.remove(efficientTransport);
             }
         }
-
-
         return result;
+
+
     }
 
     public Map.Entry<String, List<String>> findMaxProductTransport(Map<String, List<String>> productsWithDeliveryMethods) {
+
         Map.Entry<String, List<String>> maxEntry = null;
         int maxProducts = Integer.MIN_VALUE;
+        int minTransportCount = Integer.MAX_VALUE;
 
         for (Map.Entry<String, List<String>> entry : productsWithDeliveryMethods.entrySet()) {
             int productCount = entry.getValue().size();
-            if (productCount > maxProducts) {
+            int transportCount = entry.getKey().split(",").length; // Liczenie liczby metod transportu dla danego produktu
+
+            if (productCount > maxProducts || (productCount == maxProducts && transportCount < minTransportCount)) {
                 maxProducts = productCount;
+                minTransportCount = transportCount;
                 maxEntry = entry;
             }
         }

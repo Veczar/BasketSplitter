@@ -1,6 +1,5 @@
 import BasketSplitter.BasketSplitter;
 
-import javax.imageio.IIOException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
