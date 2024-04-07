@@ -47,7 +47,7 @@ The configuration JSON file should follow the format where each product is mappe
 ```
 
 ## Dependencies
-org.json: This package depends on the org.json library to parse JSON files. Make sure to include this library in your project dependencies.
+- **org.json**: This package depends on the org.json library to parse JSON files. Make sure to include this library in your project dependencies.
 
 ## Contributors
-Filip Jędrzejek 
+- **Filip Jędrzejek** ([@Veczar](https://github.com/Veczar))
