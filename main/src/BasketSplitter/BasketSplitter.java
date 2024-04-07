@@ -1,27 +1,53 @@
 package BasketSplitter;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.File;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 
 public class BasketSplitter {
-    ObjectMapper objectMapper;
     Map<String, List<String>> configMap;
 
     public BasketSplitter(String absolutePathToConfigFile){
-        objectMapper = new ObjectMapper();
+        String jsonContent = null;
         try {
-            configMap = objectMapper.readValue(new File(absolutePathToConfigFile),new TypeReference<Map<String, List<String>>>(){});
+             jsonContent = Files.readString(Paths.get(absolutePathToConfigFile));
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+
+        JSONObject jsonObject = new JSONObject(jsonContent);
+        Map<String, List<String>> map = new HashMap<>();
+
+        for (String key : jsonObject.keySet()) {
+            JSONArray jsonArray = jsonObject.getJSONArray(key);
+            List<String> values = new ArrayList<>();
+            for (int i = 0; i < jsonArray.length(); i++) {
+                values.add(jsonArray.getString(i));
+            }
+            map.put(key, values);
+        }
+
+        for (Map.Entry<String, List<String>> entry : map.entrySet()) {
+            System.out.println("Key: " + entry.getKey() + ", Values: " + entry.getValue());
         }
     }
     public Map<String, List<String>> split(List<String> items){
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return "BasketSplitter{" +
+                "configMap=" + configMap +
+                '}';
     }
 }
