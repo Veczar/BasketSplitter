@@ -9,6 +9,9 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public class BasketSplitter {
+    public static void main(String[] args) {
+
+    }
     Map<String, List<String>> configMap;
 
     public BasketSplitter(String absolutePathToConfigFile){
