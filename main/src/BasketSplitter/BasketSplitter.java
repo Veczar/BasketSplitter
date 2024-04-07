@@ -13,6 +13,7 @@ public class BasketSplitter {
 
     public BasketSplitter(String absolutePathToConfigFile){
         String jsonContent = null;
+
         try {
              jsonContent = Files.readString(Paths.get(absolutePathToConfigFile));
         } catch (IOException e) {
@@ -62,7 +63,6 @@ public class BasketSplitter {
                 reversedMap.computeIfAbsent(method, k -> new ArrayList<>()).add(product);
             }
         }
-
         return reversedMap;
     }
 
@@ -88,7 +88,6 @@ public class BasketSplitter {
         }
         return result;
 
-
     }
 
     public Map.Entry<String, List<String>> findMaxProductTransport(Map<String, List<String>> productsWithDeliveryMethods) {
@@ -107,7 +106,6 @@ public class BasketSplitter {
                 maxEntry = entry;
             }
         }
-
         return maxEntry;
     }
 
